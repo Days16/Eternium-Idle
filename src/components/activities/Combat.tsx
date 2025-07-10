@@ -18,10 +18,10 @@ const Combat: React.FC = () => {
   const [log, setLog] = useState<string[]>([]);
   const [fighting, setFighting] = useState(false);
 
-  const unlocked = data.gold >= 100;
+  const unlocked = data.unlocked.combat;
 
   const startCombat = () => {
-    if (!unlocked) return;
+    if (!unlocked || fighting) return;
     const e = getRandomEnemy(t);
     setEnemy({ ...e });
     setLog([t('combat_start', { enemy: e.name })]);

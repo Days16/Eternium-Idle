@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { db } from '../firebaseConfig';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { GameData, defaultGameData } from '../types/GameData';
@@ -21,6 +21,7 @@ export const useGame = () => {
 export const GameProvider: React.FC<{ user: any; children: React.ReactNode }> = ({ user, children }) => {
   const [data, setData] = useState<GameData>(defaultGameData);
   const [loading, setLoading] = useState(true);
+  const [pendingBackupDelete, setPendingBackupDelete] = useState<any>(null); // Nuevo estado para backup pendiente
 
   // Cargar datos de Firestore
   useEffect(() => {
@@ -29,7 +30,15 @@ export const GameProvider: React.FC<{ user: any; children: React.ReactNode }> = 
       const ref = doc(db, 'users', user.uid);
       const snap = await getDoc(ref);
       if (snap.exists()) {
-        setData({ ...defaultGameData, ...snap.data() });
+        const userData = { ...defaultGameData, ...snap.data() };
+        // Si dev está en false y hay backup, restaurar pero NO borrar backup
+        if (userData.dev === false && snap.data().devBackup) {
+          const restored = { ...snap.data().devBackup, dev: false };
+          setData(restored);
+          await setDoc(ref, { ...restored }, { merge: true }); // Solo actualiza el perfil, no borra el backup
+        } else {
+          setData(userData);
+        }
       } else {
         setData({ ...defaultGameData });
       }
@@ -38,6 +47,23 @@ export const GameProvider: React.FC<{ user: any; children: React.ReactNode }> = 
     fetchData();
     // eslint-disable-next-line
   }, [user]);
+
+  // Nuevo efecto: cuando el perfil restaurado ya está en el estado local, borra el backup de Firestore
+  useEffect(() => {
+    if (!pendingBackupDelete) return;
+    const { restored, ref } = pendingBackupDelete;
+    // Compara si el estado local coincide con el restaurado
+    const isRestored = (Object.keys(restored) as (keyof typeof restored)[]).every(key => {
+      const k = key as keyof GameData;
+      // Evita comparar funciones o campos no relevantes
+      if (typeof restored[k] === 'function') return true;
+      return JSON.stringify(data[k]) === JSON.stringify(restored[k]);
+    });
+    if (isRestored) {
+      setDoc(ref, { ...restored, devBackup: null }, { merge: true });
+      setPendingBackupDelete(null);
+    }
+  }, [data, pendingBackupDelete]);
 
   // Guardado automático
   useEffect(() => {

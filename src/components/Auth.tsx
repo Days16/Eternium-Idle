@@ -11,12 +11,16 @@ const Auth: React.FC<{ onAuth: (user: any) => void, user: any }> = ({ onAuth, us
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
+  const [cooldownLogout, setCooldownLogout] = useState(false);
+  const [cooldownTabs, setCooldownTabs] = useState(false);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setSuccess('');
+    setCooldownTabs(true);
+    setTimeout(() => setCooldownTabs(false), 1000);
     try {
       if (isRegister) {
         const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -42,15 +46,17 @@ const Auth: React.FC<{ onAuth: (user: any) => void, user: any }> = ({ onAuth, us
   };
 
   const handleLogout = async () => {
+    setCooldownLogout(true);
     await signOut(auth);
     onAuth(null);
+    setTimeout(() => setCooldownLogout(false), 1000);
   };
 
   if (user) {
     return (
       <div className="auth-logged">
         <p>{user.email}</p>
-        <button className="btn" onClick={handleLogout}>{t('logout')}</button>
+        <button className="btn" onClick={handleLogout} disabled={cooldownLogout}>{t('logout')}</button>
       </div>
     );
   }
@@ -58,8 +64,8 @@ const Auth: React.FC<{ onAuth: (user: any) => void, user: any }> = ({ onAuth, us
   return (
     <div className="auth-container">
       <div className="auth-tabs">
-        <button className={isRegister ? '' : 'active'} onClick={() => setIsRegister(false)}>{t('login')}</button>
-        <button className={isRegister ? 'active' : ''} onClick={() => setIsRegister(true)}>{t('register')}</button>
+        <button className={isRegister ? '' : 'active'} onClick={() => { if (!cooldownTabs) { setIsRegister(false); setCooldownTabs(true); setTimeout(() => setCooldownTabs(false), 1000); } }} disabled={cooldownTabs}>{t('login')}</button>
+        <button className={isRegister ? 'active' : ''} onClick={() => { if (!cooldownTabs) { setIsRegister(true); setCooldownTabs(true); setTimeout(() => setCooldownTabs(false), 1000); } }} disabled={cooldownTabs}>{t('register')}</button>
       </div>
       <form onSubmit={handleAuth} className="auth-form">
         <label htmlFor="email">Email</label>
@@ -80,7 +86,7 @@ const Auth: React.FC<{ onAuth: (user: any) => void, user: any }> = ({ onAuth, us
           onChange={e => setPassword(e.target.value)}
           required
         />
-        <button className="btn" type="submit" disabled={loading}>
+        <button className="btn" type="submit" disabled={loading || cooldownTabs}>
           {loading ? t('loading') : isRegister ? t('register') : t('login')}
         </button>
         {error && <div className="auth-error">{error}</div>}

@@ -6,8 +6,7 @@ const Exploration: React.FC = () => {
   const { data, setData } = useGame();
   const { t } = useTranslation();
   const [msg, setMsg] = useState('');
-
-  const unlocked = data.gold >= 200 && data.stone >= 200;
+  const unlocked = data.unlocked.exploration;
 
   const explore = () => {
     if (!unlocked) return;

@@ -8,19 +8,26 @@ const flag = {
 
 const LanguageSwitcher: React.FC = () => {
   const { i18n, t } = useTranslation();
+  const [cooldown, setCooldown] = React.useState(false);
+  const handleChangeLanguage = (lang: string) => {
+    if (cooldown || i18n.language === lang) return;
+    setCooldown(true);
+    i18n.changeLanguage(lang);
+    setTimeout(() => setCooldown(false), 1000);
+  };
   return (
     <div className="language-switcher">
       <button
         className={`lang-btn${i18n.language === 'es' ? ' active' : ''}`}
-        onClick={() => i18n.changeLanguage('es')}
-        disabled={i18n.language === 'es'}
+        onClick={() => handleChangeLanguage('es')}
+        disabled={i18n.language === 'es' || cooldown}
       >
         <span style={{ fontSize: 22, marginRight: 6 }}>{flag.es}</span> {t('spanish')}
       </button>
       <button
         className={`lang-btn${i18n.language === 'en' ? ' active' : ''}`}
-        onClick={() => i18n.changeLanguage('en')}
-        disabled={i18n.language === 'en'}
+        onClick={() => handleChangeLanguage('en')}
+        disabled={i18n.language === 'en' || cooldown}
         style={{ marginLeft: 8 }}
       >
         <span style={{ fontSize: 22, marginRight: 6 }}>{flag.en}</span> {t('english')}

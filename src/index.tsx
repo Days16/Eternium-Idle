@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <I18nextProvider i18n={i18n}>
-      <App />
+    <App />
     </I18nextProvider>
   </React.StrictMode>
 );

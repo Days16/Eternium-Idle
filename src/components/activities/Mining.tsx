@@ -24,7 +24,7 @@ const Mining: React.FC = () => {
   const { data, setData } = useGame();
   const { t } = useTranslation();
   const [lastMined, setLastMined] = useState<string | null>(null);
-
+  // Eliminar cooldown
   const handleMine = () => {
     const ore = getRandomOre();
     setData(prev => ({
