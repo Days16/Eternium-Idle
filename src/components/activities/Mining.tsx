@@ -10,34 +10,42 @@ const ORES = [
   { key: 'silver', label: 'silver', emoji: '🥈', prob: 0.10 },
 ];
 
-function getRandomOre() {
+function getRandomOre(unlockedOres: typeof ORES) {
   const roll = Math.random();
   let acc = 0;
-  for (const ore of ORES) {
+  for (const ore of unlockedOres) {
     acc += ore.prob;
     if (roll < acc) return ore;
   }
-  return ORES[0];
+  return unlockedOres[0];
 }
 
 const Mining: React.FC = () => {
   const { data, setData } = useGame();
   const { t } = useTranslation();
   const [lastMined, setLastMined] = useState<string | null>(null);
-  // Eliminar cooldown
-  const handleMine = () => {
-    const ore = getRandomOre();
+  // Desbloqueo progresivo de minerales por nivel de mejora
+  const showIron = data.upgrades.mining >= 2; // Hierro desde mejora 2
+  const showCopper = data.upgrades.mining >= 4; // Cobre desde mejora 4
+  const showSilver = data.upgrades.mining >= 6; // Plata desde mejora 6
+
+  // Solo minar ores desbloqueados
+  const unlockedOres = [
+    ORES[0], // gold siempre
+    ORES[1], // stone siempre
+    ...(showIron ? [ORES[2]] : []),
+    ...(showCopper ? [ORES[3]] : []),
+    ...(showSilver ? [ORES[4]] : []),
+  ];
+
+  // Eliminar función de minado aleatorio y crear una por mineral
+  const handleMineOre = (oreKey: string) => {
     setData(prev => ({
       ...prev,
-      [ore.key]: (prev as any)[ore.key] + 1,
+      [oreKey]: (prev as any)[oreKey] + 1,
     }));
-    setLastMined(ore.key);
+    setLastMined(oreKey);
   };
-
-  // Desbloqueo progresivo de minerales
-  const showIron = data.stone >= 30;
-  const showCopper = data.stone >= 60;
-  const showSilver = data.stone >= 100;
 
   // Desbloqueos progresivos (igual que antes)
   React.useEffect(() => {
@@ -54,39 +62,46 @@ const Mining: React.FC = () => {
   return (
     <div className="activity-section">
       <h2>{t('mining')}</h2>
-      <button className="btn" style={{ fontSize: 22, margin: '1rem 0' }} onClick={handleMine}>{t('mine')}</button>
       {lastMined && <div style={{ color: '#f5b942', marginBottom: 8 }}>{t('you_mined', { ore: t(lastMined) })}</div>}
       <div style={{ margin: '1rem 0' }}>
         <strong>{t('inventory')}:</strong>
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          <li style={{ display: 'inline-block', marginRight: 16 }}>
-            <span style={{ fontSize: 22 }}>🪙</span> {t('gold')}: {data.gold}
-          </li>
-          <li style={{ display: 'inline-block', marginRight: 16 }}>
-            <span style={{ fontSize: 22 }}>🪨</span> {t('stone')}: {data.stone}
-          </li>
-          {showIron ? (
-            <li style={{ display: 'inline-block', marginRight: 16 }}>
-              <span style={{ fontSize: 22 }}>⛓️</span> {t('iron')}: {data.iron}
-            </li>
-          ) : (
-            <li style={{ display: 'inline-block', marginRight: 16, color: '#ffb347' }}>{t('iron_unlock_msg')}</li>
-          )}
-          {showCopper ? (
-            <li style={{ display: 'inline-block', marginRight: 16 }}>
-              <span style={{ fontSize: 22 }}>🥉</span> {t('copper')}: {data.copper}
-            </li>
-          ) : (
-            <li style={{ display: 'inline-block', marginRight: 16, color: '#ffb347' }}>{t('copper_unlock_msg')}</li>
-          )}
-          {showSilver ? (
-            <li style={{ display: 'inline-block', marginRight: 16 }}>
-              <span style={{ fontSize: 22 }}>🥈</span> {t('silver')}: {data.silver}
-            </li>
-          ) : (
-            <li style={{ display: 'inline-block', marginRight: 16, color: '#ffb347' }}>{t('silver_unlock_msg')}</li>
-          )}
-        </ul>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginTop: 12 }}>
+          {/* Oro */}
+          <div className="ore-container" style={{ background: '#232323', borderRadius: 12, padding: '1rem 1.2rem', minWidth: 120, textAlign: 'center', boxShadow: '0 0 8px #18181833' }}>
+            <span style={{ fontSize: 28 }}>{ORES[0].emoji}</span>
+            <div style={{ fontWeight: 'bold', marginTop: 4 }}>{t('gold')}</div>
+            <div>{data.gold}</div>
+            <button className="btn" style={{ marginTop: 8 }} onClick={() => handleMineOre('gold')}>{t('mine')}</button>
+          </div>
+          {/* Piedra */}
+          <div className="ore-container" style={{ background: '#232323', borderRadius: 12, padding: '1rem 1.2rem', minWidth: 120, textAlign: 'center', boxShadow: '0 0 8px #18181833' }}>
+            <span style={{ fontSize: 28 }}>{ORES[1].emoji}</span>
+            <div style={{ fontWeight: 'bold', marginTop: 4 }}>{t('stone')}</div>
+            <div>{data.stone}</div>
+            <button className="btn" style={{ marginTop: 8 }} onClick={() => handleMineOre('stone')}>{t('mine')}</button>
+          </div>
+          {/* Hierro */}
+          <div className="ore-container" style={{ background: '#232323', borderRadius: 12, padding: '1rem 1.2rem', minWidth: 120, textAlign: 'center', boxShadow: '0 0 8px #18181833', color: showIron ? undefined : '#ffb347' }}>
+            <span style={{ fontSize: 28 }}>{ORES[2].emoji}</span>
+            <div style={{ fontWeight: 'bold', marginTop: 4 }}>{t('iron')}</div>
+            <div>{showIron ? data.iron : t('iron_unlock_msg')}</div>
+            <button className="btn" style={{ marginTop: 8 }} onClick={() => handleMineOre('iron')} disabled={!showIron}>{t('mine')}</button>
+          </div>
+          {/* Cobre */}
+          <div className="ore-container" style={{ background: '#232323', borderRadius: 12, padding: '1rem 1.2rem', minWidth: 120, textAlign: 'center', boxShadow: '0 0 8px #18181833', color: showCopper ? undefined : '#ffb347' }}>
+            <span style={{ fontSize: 28 }}>{ORES[3].emoji}</span>
+            <div style={{ fontWeight: 'bold', marginTop: 4 }}>{t('copper')}</div>
+            <div>{showCopper ? data.copper : t('copper_unlock_msg')}</div>
+            <button className="btn" style={{ marginTop: 8 }} onClick={() => handleMineOre('copper')} disabled={!showCopper}>{t('mine')}</button>
+          </div>
+          {/* Plata */}
+          <div className="ore-container" style={{ background: '#232323', borderRadius: 12, padding: '1rem 1.2rem', minWidth: 120, textAlign: 'center', boxShadow: '0 0 8px #18181833', color: showSilver ? undefined : '#ffb347' }}>
+            <span style={{ fontSize: 28 }}>{ORES[4].emoji}</span>
+            <div style={{ fontWeight: 'bold', marginTop: 4 }}>{t('silver')}</div>
+            <div>{showSilver ? data.silver : t('silver_unlock_msg')}</div>
+            <button className="btn" style={{ marginTop: 8 }} onClick={() => handleMineOre('silver')} disabled={!showSilver}>{t('mine')}</button>
+          </div>
+        </div>
       </div>
       <p style={{ fontSize: 12, color: '#aaa' }}>{t('mining_auto')}</p>
     </div>

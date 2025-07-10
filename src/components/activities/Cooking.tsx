@@ -32,11 +32,13 @@ const Cooking: React.FC = () => {
       <div style={{ width: 64, height: 64, background: 'saddlebrown', margin: '0 auto', borderRadius: 8 }} />
       <p>{t('recipe_bread')}</p>
       {unlocked ? (
-        <button className="btn" onClick={cookBread}>{t('cook_bread')}</button>
+        <>
+          <button className="btn" onClick={cookBread}>{t('cook_bread')}</button>
+          <p>{t('food_count')}: {data.food}</p>
+        </>
       ) : (
         <div style={{ color: '#ffb347', marginTop: 8 }}>{t('cooking_unlock_msg')}</div>
       )}
-      <p>{t('food_count')}: {data.food}</p>
       {msg && <div style={{ color: '#f5b942', marginTop: 8 }}>{msg}</div>}
     </div>
   );

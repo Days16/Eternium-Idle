@@ -12,6 +12,10 @@ const Achievements: React.FC = () => {
     { id: 'combat1', text: t('ach_combat1'), check: (data: any) => data.stats.combatsWon >= 1 },
     { id: 'cook1', text: t('ach_cook1'), check: (data: any) => data.stats.recipesCooked >= 1 },
     { id: 'explore1', text: t('ach_explore1'), check: (data: any) => data.stats.explorations >= 1 },
+    { id: 'ach_upgrade_mining1', text: t('ach_upgrade_mining1'), check: (data: any) => data.upgrades.mining >= 1 },
+    { id: 'ach_upgrade_combat1', text: t('ach_upgrade_combat1'), check: (data: any) => data.upgrades.combat >= 1 },
+    { id: 'ach_upgrade_cooking1', text: t('ach_upgrade_cooking1'), check: (data: any) => data.upgrades.cooking >= 1 },
+    { id: 'ach_upgrade_exploration1', text: t('ach_upgrade_exploration1'), check: (data: any) => data.upgrades.exploration >= 1 },
   ];
 
   useEffect(() => {

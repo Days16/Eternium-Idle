@@ -9,7 +9,8 @@ const flag = {
 const LanguageSwitcher: React.FC = () => {
   const { i18n, t } = useTranslation();
   const [cooldown, setCooldown] = React.useState(false);
-  const handleChangeLanguage = (lang: string) => {
+  const handleChangeLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const lang = e.target.value;
     if (cooldown || i18n.language === lang) return;
     setCooldown(true);
     i18n.changeLanguage(lang);
@@ -17,21 +18,15 @@ const LanguageSwitcher: React.FC = () => {
   };
   return (
     <div className="language-switcher">
-      <button
-        className={`lang-btn${i18n.language === 'es' ? ' active' : ''}`}
-        onClick={() => handleChangeLanguage('es')}
-        disabled={i18n.language === 'es' || cooldown}
+      <select
+        value={i18n.language}
+        onChange={handleChangeLanguage}
+        disabled={cooldown}
+        style={{ minWidth: 120, fontSize: '1.1rem', padding: '0.5rem 1.2rem', borderRadius: 8, background: '#232323', color: '#b3b8c7', border: '1.5px solid #181818', fontWeight: 'bold' }}
       >
-        <span style={{ fontSize: 22, marginRight: 6 }}>{flag.es}</span> {t('spanish')}
-      </button>
-      <button
-        className={`lang-btn${i18n.language === 'en' ? ' active' : ''}`}
-        onClick={() => handleChangeLanguage('en')}
-        disabled={i18n.language === 'en' || cooldown}
-        style={{ marginLeft: 8 }}
-      >
-        <span style={{ fontSize: 22, marginRight: 6 }}>{flag.en}</span> {t('english')}
-      </button>
+        <option value="es">{flag.es} {t('spanish')}</option>
+        <option value="en">{flag.en} {t('english')}</option>
+      </select>
     </div>
   );
 };

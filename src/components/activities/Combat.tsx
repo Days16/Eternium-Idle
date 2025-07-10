@@ -47,7 +47,7 @@ const Combat: React.FC = () => {
       }
       // Enemigo ataca
       playerHp -= e.atk;
-      setLog(l => [...l, t('combat_enemy_attack', { enemy: e.name, hp: Math.max(playerHp, 0) })]);
+      setLog(l => [...l, t('combat_enemy_attack', { turn, enemy: e.name, hp: Math.max(playerHp, 0) })]);
       if (playerHp <= 0) {
         setLog(l => [...l, t('combat_lose', { enemy: e.name })]);
         setFighting(false);

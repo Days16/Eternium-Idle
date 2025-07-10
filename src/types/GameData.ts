@@ -12,6 +12,8 @@ export interface GameData {
   upgrades: {
     mining: number;
     combat: number;
+    cooking: number;
+    exploration: number;
   };
   unlocked: {
     combat: boolean;
@@ -42,6 +44,8 @@ export const defaultGameData: GameData = {
   upgrades: {
     mining: 0,
     combat: 0,
+    cooking: 0,
+    exploration: 0,
   },
   unlocked: {
     combat: false,
