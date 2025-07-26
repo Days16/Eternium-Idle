@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { auth } from '../firebaseConfig';
+import { auth } from '../../services/firebaseConfig';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
 
@@ -68,7 +68,7 @@ const Auth: React.FC<{ onAuth: (user: any) => void, user: any }> = ({ onAuth, us
         <button className={isRegister ? 'active' : ''} onClick={() => { if (!cooldownTabs) { setIsRegister(true); setCooldownTabs(true); setTimeout(() => setCooldownTabs(false), 1000); } }} disabled={cooldownTabs}>{t('register')}</button>
       </div>
       <form onSubmit={handleAuth} className="auth-form">
-        <label htmlFor="email">Email</label>
+        <label htmlFor="email"></label>
         <input
           id="email"
           type="email"
@@ -77,7 +77,7 @@ const Auth: React.FC<{ onAuth: (user: any) => void, user: any }> = ({ onAuth, us
           onChange={e => setEmail(e.target.value)}
           required
         />
-        <label htmlFor="password">{t('password')}</label>
+        <label htmlFor="password"></label>
         <input
           id="password"
           type="password"

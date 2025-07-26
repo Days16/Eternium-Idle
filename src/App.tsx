@@ -1,20 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import './App.css';
-import Auth from './components/Auth';
-import { auth } from './firebaseConfig';
+import './styles/App.css';
+import Auth from './components/ui/Auth';
+import { auth } from './services/firebaseConfig';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import LanguageSwitcher from './components/LanguageSwitcher';
-import { GameProvider, useGame } from './components/GameProvider';
-import Mining from './components/activities/Mining';
-import Combat from './components/activities/Combat';
-import Cooking from './components/activities/Cooking';
-import Exploration from './components/activities/Exploration';
-import Shop from './components/Shop';
-import Achievements from './components/Achievements';
-import UserPanel from './components/UserPanel';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from './firebaseConfig';
+import LanguageSwitcher from './components/ui/LanguageSwitcher';
+import { GameProvider, useGame } from './components/game/GameProvider';
+import Mining from './components/game/Mining';
+import Combat from './components/game/Combat';
+import Cooking from './components/game/Cooking';
+import Exploration from './components/game/Exploration';
+import Shop from './components/game/Shop';
+import Achievements from './components/game/Achievements';
+import UserPanel from './components/layout/UserPanel';
+import Blacksmith from './components/game/Blacksmith';
 
 function GoldBar() {
   const { data } = useGame();
@@ -93,6 +92,7 @@ function GameUI({ user, setUser, tab, setTab, t, handleLogout }: any) {
       <div className="tabs">
         <button className={tab === 'mining' ? 'active' : ''} onClick={() => handleTab('mining')}>{t('mining')}</button>
         <button className={tab === 'combat' ? 'active' : ''} onClick={() => handleTab('combat')}>{t('combat')}</button>
+        <button className={tab === 'blacksmith' ? 'active' : ''} onClick={() => handleTab('blacksmith')}>{t('blacksmith') || 'Herrero'}</button>
         <button className={tab === 'cooking' ? 'active' : ''} onClick={() => handleTab('cooking')}>{t('cooking')}</button>
         <button className={tab === 'exploration' ? 'active' : ''} onClick={() => handleTab('exploration')}>{t('exploration')}</button>
         <button className={tab === 'shop' ? 'active' : ''} onClick={() => handleTab('shop')}>{t('shop')}</button>
@@ -101,6 +101,14 @@ function GameUI({ user, setUser, tab, setTab, t, handleLogout }: any) {
       </div>
       {tab === 'mining' && <Mining />}
       {tab === 'combat' && <Combat />}
+      {tab === 'blacksmith' && (
+        <Blacksmith
+          mining={{ gold: data.gold, stone: data.stone }}
+          equipment={data.equipment}
+          setMining={({ gold, stone }) => setData((prev: any) => ({ ...prev, gold, stone }))}
+          setEquipment={(equipment) => setData((prev: any) => ({ ...prev, equipment }))}
+        />
+      )}
       {tab === 'cooking' && <Cooking />}
       {tab === 'exploration' && <Exploration />}
       {tab === 'shop' && <Shop />}

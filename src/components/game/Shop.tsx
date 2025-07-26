@@ -10,6 +10,7 @@ const Shop: React.FC = () => {
   const [cooldownCombat, setCooldownCombat] = React.useState(false);
   const [cooldownCooking, setCooldownCooking] = React.useState(false);
   const [cooldownExploration, setCooldownExploration] = React.useState(false);
+  const [cooldownBlacksmith, setCooldownBlacksmith] = React.useState(false);
 
   const buyMiningUpgrade = () => {
     if (data.gold < 50 || cooldownMining) return;
@@ -87,33 +88,92 @@ const Shop: React.FC = () => {
     setTimeout(() => setCooldownExploration(false), 1000);
   };
 
+  const buyBlacksmithUpgrade = () => {
+    if (data.gold < 70 || cooldownBlacksmith || !data.unlocked.blacksmith) return;
+    setCooldownBlacksmith(true);
+    setData(prev => {
+      const newUpgrades = { ...prev.upgrades, blacksmith: prev.upgrades.blacksmith + 1 };
+      const newAchievements = [...prev.achievements];
+      if (newUpgrades.blacksmith === 1 && !newAchievements.includes('ach_upgrade_blacksmith1')) {
+        newAchievements.push('ach_upgrade_blacksmith1');
+      }
+      return {
+        ...prev,
+        gold: prev.gold - 70,
+        upgrades: newUpgrades,
+        achievements: newAchievements,
+      };
+    });
+    setTimeout(() => setCooldownBlacksmith(false), 1000);
+  };
+
+  const upgradesList = [
+    {
+      key: 'mining',
+      unlocked: true,
+      cost: 50,
+      cooldown: cooldownMining,
+      onClick: buyMiningUpgrade,
+      label: t('shop_mining', { level: data.upgrades.mining }),
+      desc: t('desc_mining'),
+      disabled: data.gold < 50 || cooldownMining,
+    },
+    {
+      key: 'combat',
+      unlocked: data.unlocked.combat,
+      cost: 100,
+      cooldown: cooldownCombat,
+      onClick: buyCombatUpgrade,
+      label: t('shop_combat', { level: data.upgrades.combat }),
+      desc: t('desc_combat'),
+      disabled: data.gold < 100 || cooldownCombat,
+    },
+    {
+      key: 'cooking',
+      unlocked: data.unlocked.cooking,
+      cost: 80,
+      cooldown: cooldownCooking,
+      onClick: buyCookingUpgrade,
+      label: t('shop_cooking', { level: data.upgrades.cooking }),
+      desc: t('desc_cooking'),
+      disabled: data.gold < 80 || cooldownCooking,
+    },
+    {
+      key: 'exploration',
+      unlocked: data.unlocked.exploration,
+      cost: 120,
+      cooldown: cooldownExploration,
+      onClick: buyExplorationUpgrade,
+      label: t('shop_exploration', { level: data.upgrades.exploration }),
+      desc: t('desc_exploration'),
+      disabled: data.gold < 120 || cooldownExploration,
+    },
+    {
+      key: 'blacksmith',
+      unlocked: data.unlocked.blacksmith,
+      cost: 70,
+      cooldown: cooldownBlacksmith,
+      onClick: buyBlacksmithUpgrade,
+      label: t('shop_blacksmith', { level: data.upgrades.blacksmith }),
+      desc: t('desc_blacksmith'),
+      disabled: data.gold < 70 || cooldownBlacksmith,
+    },
+  ];
+
   return (
     <div className="activity-section">
       <h2>{t('shop')}</h2>
-      <div>
-        <button className="btn" onClick={buyMiningUpgrade} disabled={data.gold < 50 || cooldownMining}>
-          {cooldownMining ? t('loading') : t('shop_mining', { level: data.upgrades.mining })}
-        </button>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        {upgradesList.filter(u => u.unlocked).map(upg => (
+          <div key={upg.key} style={{ background: '#232323', borderRadius: 12, padding: '1rem 1.2rem', boxShadow: '0 0 8px #18181833', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
+            <div style={{ fontWeight: 'bold', fontSize: 17 }}>{upg.label}</div>
+            <div style={{ fontSize: 13, color: '#aaa', marginBottom: 4 }}>{upg.desc}</div>
+            <button className="btn" onClick={upg.onClick} disabled={upg.disabled} style={{ minWidth: 120, background: '#232323', color: '#fff', borderRadius: 8, fontWeight: 600, opacity: upg.disabled ? 0.6 : 1 }}>
+              {upg.cooldown ? t('loading') : t('upgrade')}
+            </button>
+          </div>
+        ))}
       </div>
-      <div style={{ marginTop: 12 }}>
-        <button className="btn" onClick={buyCombatUpgrade} disabled={data.gold < 100 || cooldownCombat}>
-          {cooldownCombat ? t('loading') : t('shop_combat', { level: data.upgrades.combat })}
-        </button>
-      </div>
-      {data.unlocked.cooking && (
-        <div style={{ marginTop: 12 }}>
-          <button className="btn" onClick={buyCookingUpgrade} disabled={data.gold < 80 || cooldownCooking}>
-            {cooldownCooking ? t('loading') : t('shop_cooking', { level: data.upgrades.cooking })}
-          </button>
-        </div>
-      )}
-      {data.unlocked.exploration && (
-        <div style={{ marginTop: 12 }}>
-          <button className="btn" onClick={buyExplorationUpgrade} disabled={data.gold < 120 || cooldownExploration}>
-            {cooldownExploration ? t('loading') : t('shop_exploration', { level: data.upgrades.exploration })}
-          </button>
-        </div>
-      )}
     </div>
   );
 };

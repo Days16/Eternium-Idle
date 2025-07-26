@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useGame } from '../GameProvider';
+import { useGame } from '../game/GameProvider';
 import { useTranslation } from 'react-i18next';
 
 const ORES = [
@@ -56,7 +56,6 @@ const Mining: React.FC = () => {
       if (!newData.unlocked.exploration && newData.gold >= 200 && newData.stone >= 200) newData.unlocked.exploration = true;
       return newData;
     });
-    // eslint-disable-next-line
   }, [data.gold, data.stone]);
 
   return (
@@ -85,21 +84,27 @@ const Mining: React.FC = () => {
             <span style={{ fontSize: 28 }}>{ORES[2].emoji}</span>
             <div style={{ fontWeight: 'bold', marginTop: 4 }}>{t('iron')}</div>
             <div>{showIron ? data.iron : t('iron_unlock_msg')}</div>
-            <button className="btn" style={{ marginTop: 8 }} onClick={() => handleMineOre('iron')} disabled={!showIron}>{t('mine')}</button>
+            {showIron && (
+              <button className="btn" style={{ marginTop: 8 }} onClick={() => handleMineOre('iron')}>{t('mine')}</button>
+            )}
           </div>
           {/* Cobre */}
           <div className="ore-container" style={{ background: '#232323', borderRadius: 12, padding: '1rem 1.2rem', minWidth: 120, textAlign: 'center', boxShadow: '0 0 8px #18181833', color: showCopper ? undefined : '#ffb347' }}>
             <span style={{ fontSize: 28 }}>{ORES[3].emoji}</span>
             <div style={{ fontWeight: 'bold', marginTop: 4 }}>{t('copper')}</div>
             <div>{showCopper ? data.copper : t('copper_unlock_msg')}</div>
-            <button className="btn" style={{ marginTop: 8 }} onClick={() => handleMineOre('copper')} disabled={!showCopper}>{t('mine')}</button>
+            {showCopper && (
+              <button className="btn" style={{ marginTop: 8 }} onClick={() => handleMineOre('copper')}>{t('mine')}</button>
+            )}
           </div>
           {/* Plata */}
           <div className="ore-container" style={{ background: '#232323', borderRadius: 12, padding: '1rem 1.2rem', minWidth: 120, textAlign: 'center', boxShadow: '0 0 8px #18181833', color: showSilver ? undefined : '#ffb347' }}>
             <span style={{ fontSize: 28 }}>{ORES[4].emoji}</span>
             <div style={{ fontWeight: 'bold', marginTop: 4 }}>{t('silver')}</div>
             <div>{showSilver ? data.silver : t('silver_unlock_msg')}</div>
-            <button className="btn" style={{ marginTop: 8 }} onClick={() => handleMineOre('silver')} disabled={!showSilver}>{t('mine')}</button>
+            {showSilver && (
+              <button className="btn" style={{ marginTop: 8 }} onClick={() => handleMineOre('silver')}>{t('mine')}</button>
+            )}
           </div>
         </div>
       </div>

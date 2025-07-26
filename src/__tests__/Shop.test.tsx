@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
-import i18n from '../i18n';
-import Shop from '../components/Shop';
+import i18n from '../services/i18n';
+import Shop from '../components/game/Shop';
 import { defaultGameData } from '../types/GameData';
 
 const mockUser = { uid: 'test' };
@@ -10,8 +10,8 @@ const mockData = {
   ...defaultGameData,
 };
 
-jest.mock('../components/GameProvider', () => {
-  const actual = jest.requireActual('../components/GameProvider');
+jest.mock('../components/game/GameProvider', () => {
+  const actual = jest.requireActual('../components/game/GameProvider');
   return {
     ...actual,
     useGame: () => ({

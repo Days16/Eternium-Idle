@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useGame } from '../GameProvider';
+import { useGame } from './GameProvider';
 import { useTranslation } from 'react-i18next';
+import PaperIcon from '../../assets/Paper.png';
 
 const Exploration: React.FC = () => {
   const { data, setData } = useGame();
@@ -37,7 +38,7 @@ const Exploration: React.FC = () => {
   return (
     <div className="activity-section">
       <h2>{t('exploration')}</h2>
-      <div style={{ width: 64, height: 64, background: 'teal', margin: '0 auto', borderRadius: 8 }} />
+      <img src={PaperIcon} alt="paper" style={{ width: 64, height: 64, display: 'block', margin: '0 auto', borderRadius: 8}} />
       {unlocked ? (
         <>
           <button className="btn" onClick={explore}>{t('explore')}</button>

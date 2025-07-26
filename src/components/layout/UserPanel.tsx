@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useGame } from './GameProvider';
+import { useGame } from '../game/GameProvider';
 import { useTranslation } from 'react-i18next';
-import { auth } from '../firebaseConfig';
+import { auth } from '../../services/firebaseConfig';
 import { signOut } from 'firebase/auth';
-import { defaultGameData } from '../types/GameData';
+import { defaultGameData } from '../../types/GameData';
 
-const UserPanel: React.FC<{ setUser?: (user: any) => void, unlockAll?: () => void, hasBackup?: boolean, isDev?: boolean, alert?: string | null }> = ({ setUser, unlockAll, hasBackup, isDev, alert }) => {
+const UserPanel: React.FC<{ setUser?: (user: any) => void, unlockAll?: () => void, alert?: string | null }> = ({ setUser, unlockAll, alert }) => {
   const { data, user, setData } = useGame();
   const { t } = useTranslation();
   const [cooldownLogout, setCooldownLogout] = useState(false);
@@ -21,7 +21,7 @@ const UserPanel: React.FC<{ setUser?: (user: any) => void, unlockAll?: () => voi
   // Botón para resetear perfil
   const handleReset = () => {
     setCooldownReset(true);
-    setData({ ...defaultGameData, dev: data.dev ?? false });
+    setData({ ...defaultGameData });
     setTimeout(() => setCooldownReset(false), 1000);
   };
 
@@ -36,10 +36,7 @@ const UserPanel: React.FC<{ setUser?: (user: any) => void, unlockAll?: () => voi
       <p>{t('explorations')}: {data.stats.explorations}</p>
       <p>{t('achievements_count')}: {data.achievements.length}</p>
       <button className="btn" style={{ marginTop: 16 }} onClick={handleLogout} disabled={cooldownLogout}>{cooldownLogout ? t('loading') : t('logout')}</button>
-      <button className="btn" style={{ marginTop: 16, marginLeft: 8 }} onClick={handleReset} disabled={cooldownReset}>{cooldownReset ? t('loading') : t('reset_profile')}</button>
-      {isDev && hasBackup && unlockAll && (
-        <button className="btn" style={{ marginTop: 16, marginLeft: 8, background: '#444' }} onClick={unlockAll}>{t('unlock_all')}</button>
-      )}
+      <button className="btn" style={{ marginTop: 16, marginLeft: 8, background: '#FF0000' }} onClick={handleReset} disabled={cooldownReset}>{cooldownReset ? t('loading') : t('reset_profile')}</button>
     </div>
   );
 };

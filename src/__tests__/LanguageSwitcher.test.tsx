@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import LanguageSwitcher from '../components/LanguageSwitcher';
+import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 
 describe('Selector de idioma', () => {
   test('muestra los botones de Español e Inglés', () => {

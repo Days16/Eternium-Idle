@@ -16,13 +16,23 @@ const Achievements: React.FC = () => {
     { id: 'ach_upgrade_combat1', text: t('ach_upgrade_combat1'), check: (data: any) => data.upgrades.combat >= 1 },
     { id: 'ach_upgrade_cooking1', text: t('ach_upgrade_cooking1'), check: (data: any) => data.upgrades.cooking >= 1 },
     { id: 'ach_upgrade_exploration1', text: t('ach_upgrade_exploration1'), check: (data: any) => data.upgrades.exploration >= 1 },
+    { id: 'ach_upgrade_blacksmith1', text: t('ach_upgrade_blacksmith1'), check: (data: any) => data.upgrades.blacksmith >= 1 },
+    { id: 'ach_cook_bread1', text: t('ach_cook_bread1'), check: (data: any) => data.foods.bread >= 1 },
+    { id: 'ach_cook_soup1', text: t('ach_cook_soup1'), check: (data: any) => data.foods.soup >= 1 },
+    { id: 'ach_cook_stew1', text: t('ach_cook_stew1'), check: (data: any) => data.foods.stew >= 1 },
+    { id: 'ach_cook_pie1', text: t('ach_cook_pie1'), check: (data: any) => data.foods.pie >= 1 },
+    { id: 'ach_forge_sword1', text: t('ach_forge_sword1'), check: (data: any) => data.equipment.sword },
+    { id: 'ach_forge_armor1', text: t('ach_forge_armor1'), check: (data: any) => data.equipment.armor },
+    { id: 'ach_forge_helmet1', text: t('ach_forge_helmet1'), check: (data: any) => data.equipment.helmet },
   ];
 
   useEffect(() => {
+    // Solo añade logros nuevos, nunca elimina los ya conseguidos
     const unlocked = ACHIEVEMENTS.filter(a => a.check(data) && !data.achievements.includes(a.id)).map(a => a.id);
     if (unlocked.length > 0) {
       setData(prev => ({ ...prev, achievements: [...prev.achievements, ...unlocked] }));
     }
+    // No eliminamos logros aunque los requisitos ya no se cumplan
   }, [data, setData]);
 
   return (

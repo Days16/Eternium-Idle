@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { GameProvider } from '../components/GameProvider';
-import Cooking from '../components/activities/Cooking';
+import Cooking from '../components/game/Cooking';
 import { defaultGameData } from '../types/GameData';
 
 const mockUser = { uid: 'test' };
@@ -10,8 +9,8 @@ const mockData = {
   unlocked: { ...defaultGameData.unlocked, cooking: false },
 };
 
-jest.mock('../components/GameProvider', () => {
-  const actual = jest.requireActual('../components/GameProvider');
+jest.mock('../components/game/GameProvider', () => {
+  const actual = jest.requireActual('../components/game/GameProvider');
   return {
     ...actual,
     useGame: () => ({

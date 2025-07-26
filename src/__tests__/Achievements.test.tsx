@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
-import i18n from '../i18n';
-import Achievements from '../components/Achievements';
+import i18n from '../services/i18n';
+import Achievements from '../components/game/Achievements';
 import { defaultGameData } from '../types/GameData';
 
 const mockUser = { uid: 'test' };
@@ -11,8 +11,8 @@ const mockData = {
   achievements: ['ach_gold100'],
 };
 
-jest.mock('../components/GameProvider', () => {
-  const actual = jest.requireActual('../components/GameProvider');
+jest.mock('../components/game/GameProvider', () => {
+  const actual = jest.requireActual('../components/game/GameProvider');
   return {
     ...actual,
     useGame: () => ({

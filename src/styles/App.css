@@ -100,6 +100,7 @@ input, select {
   font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
   transition: border 0.2s, background 0.2s;
 }
+
 input:focus, select:focus {
   outline: none;
   border: 2px solid #b3b8c7;

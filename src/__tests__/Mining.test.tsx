@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
-import i18n from '../i18n';
-import Mining from '../components/activities/Mining';
+import i18n from '../services/i18n';
+import Mining from '../components/game/Mining';
 import { defaultGameData } from '../types/GameData';
 
 const mockUser = { uid: 'test' };
@@ -12,8 +12,8 @@ const mockData = {
   stone: 30,
 };
 
-jest.mock('../components/GameProvider', () => {
-  const actual = jest.requireActual('../components/GameProvider');
+jest.mock('../components/game/GameProvider', () => {
+  const actual = jest.requireActual('../components/game/GameProvider');
   return {
     ...actual,
     useGame: () => ({
@@ -33,7 +33,6 @@ describe('Minería', () => {
         <Mining />
       </I18nextProvider>
     );
-    // Puede haber más de un elemento con 'Minería', solo comprobamos que exista al menos uno
     expect(screen.getAllByText(/minería/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/50/)).toBeInTheDocument();
     expect(screen.getByText(/30/)).toBeInTheDocument();
