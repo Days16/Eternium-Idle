@@ -1,6 +1,6 @@
 # Eternium Idle
 # FASE BETA NO ESTA TERMINADO
-Eternium Idle es un juego incremental/idle RPG inspirado en Melvor Idle y Cookie Clicker, ambientado en un mundo de fantasía medieval. El jugador comienza con la minería y desbloquea progresivamente nuevas actividades como combate, cocina y exploración. El progreso se guarda automáticamente en la nube usando Firebase.
+Eternium Idle es un juego incremental/idle RPG, ambientado en un mundo de fantasía medieval. El jugador comienza con la minería y desbloquea progresivamente nuevas actividades como combate, cocina y exploración. El progreso se guarda automáticamente en la nube.
 
 ## Tecnologías principales
 - React + TypeScript
